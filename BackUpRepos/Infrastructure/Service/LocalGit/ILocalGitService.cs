@@ -1,9 +1,8 @@
 ﻿using BackUpRepos.Model;
 
-namespace BackUpRepos.Infrastructure.Service.LocalGit
+namespace BackUpRepos.Infrastructure.Service.LocalGit;
+
+public interface ILocalGitService
 {
-    public interface ILocalGitService
-    {
-        Task AddOrUpdateAsync(List<GetReposResponse> repoResponses);
-    }
+    Task AddOrUpdateAsync(List<GetReposResponse> repoResponses);
 }
