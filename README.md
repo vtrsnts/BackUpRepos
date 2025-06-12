@@ -6,7 +6,7 @@
 
 ## 🚀 Overview
 
-**BackUpRepos** is a robust, configurable tool for backing up your Azure DevOps Git repositories directly to your local hard drive. Designed for reliability and automation, this tool ensures you never lose your source code—even if it’s in the cloud.
+**BackUpRepos** is a robust, configurable tool for backing up your Azure DevOps Git repositories directly to your local hard drive. Designed for reliability and automation, this tool ensures you never lose your source code—even if it’s in the cloud. It also helps migrate large quantities of repositories to new structures and supports offline backup scenarios.
 
 - **Automated backup** of all or selected repositories from Azure DevOps
 - **Configurable storage path** for local backups
