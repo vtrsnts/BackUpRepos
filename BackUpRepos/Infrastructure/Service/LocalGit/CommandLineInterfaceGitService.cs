@@ -3,6 +3,7 @@ using BackUpRepos.Model;
 using BackUpRepos.Model.Config;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
+using System.Text;
 
 namespace BackUpRepos.Infrastructure.Service.LocalGit;
 
@@ -92,7 +93,7 @@ public class CommandLineInterfaceGitService : ICommandLineInterfaceGitService
     private List<string> GetExternalProcessOutPut(Process process, bool showResult = true)
     {
         var outputLines = new List<string>();
-        using (StreamReader reader = process.StandardOutput)
+        using (StreamReader reader = new StreamReader(process.StandardOutput.BaseStream, Encoding.UTF8))
         {
             string line;
             while (!string.IsNullOrEmpty(line = $"{reader.ReadLine()}"))
