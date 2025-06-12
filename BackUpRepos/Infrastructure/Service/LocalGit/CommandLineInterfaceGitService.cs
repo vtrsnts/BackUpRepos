@@ -18,6 +18,7 @@ public class CommandLineInterfaceGitService : ICommandLineInterfaceGitService
     }
     private void AddPermissions(List<GetReposResponse> repoResponses)
     {
+        //git config --global --unset-all safe.directory  
         var safeDirectories = CallExternalGitCommand($@"config --global --get-all safe.directory", false);
         foreach (var repo in repoResponses)
         {
