@@ -17,9 +17,9 @@ public class AzureDevOpsGit : IAzureDevOpsGit
     }
     private async Task<List<string>> GetBranches(string repoName)
     {
-        List<string> branchNames = new List<string>();
+        var branchNames = new List<string>();
         string branchUrl = $"{_azureDevOpsConfig.RepositoriesUrl}/{repoName}/refs?filter=heads&api-version=7.1-preview.1";
-        using (HttpClient client = new HttpClient())
+        using (var client = new HttpClient())
         {
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             AddAuthorizationHeader(client);
@@ -29,12 +29,11 @@ public class AzureDevOpsGit : IAzureDevOpsGit
             string responseBody = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
-                JObject jsonResponse = JObject.Parse(responseBody);
+                JObject? jsonResponse = JObject.Parse(responseBody);
+                if (jsonResponse.TryGetValue("value", out JToken? jToken))
+                    foreach (var branch in jToken)
+                        branchNames.Add($"{branch["name"]}".Replace(@"refs/heads/", string.Empty));
 
-                foreach (var branch in jsonResponse["value"])
-                {
-                    branchNames.Add($"{branch["name"]}".Replace(@"refs/heads/", string.Empty));
-                }
             }
             else
             {
@@ -45,27 +44,23 @@ public class AzureDevOpsGit : IAzureDevOpsGit
     }
     public async Task<List<GetReposResponse>> GetRepos()
     {
-        List<GetReposResponse> result = new List<GetReposResponse>();
+        var result = new List<GetReposResponse>();
         JsonElement? repositoryList = null;
-        using (HttpClient client = new HttpClient())
+        using (var client = new HttpClient())
         {
             AddAuthorizationHeader(client);
             HttpResponseMessage response = await client.GetAsync($"{_azureDevOpsConfig.RepositoriesUrl}?api-version=7.1-preview.1");
             var content = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
-            {
                 repositoryList = JsonDocument.Parse(content).RootElement.GetProperty("value");
-            }
             else
-            {
                 Console.WriteLine($"Error: {content}");
-            }
+
         }
         if (repositoryList != null)
             foreach (var repo in repositoryList.Value.EnumerateArray())
             {
-
-                string repoName = repo.GetProperty("name").GetString();
+                string repoName = $"{repo.GetProperty("name").GetString()}";
                 List<string> branchList = await GetBranches(repoName);
                 string cloneUrl = $"{repo.GetProperty("remoteUrl").GetString()}";
                 result.Add(new GetReposResponse(repoName, cloneUrl, branchList));
@@ -76,5 +71,5 @@ public class AzureDevOpsGit : IAzureDevOpsGit
     {
         var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($":{_azureDevOpsConfig.PersonalAccessToken}"));
         client.DefaultRequestHeaders.Add("Authorization", $"Basic {authToken}");
-    }  
+    }
 }

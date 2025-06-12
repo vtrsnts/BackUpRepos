@@ -1,9 +1,8 @@
 ﻿using BackUpRepos.Model;
-using MediatR;
 
-namespace BackUpRepos.Features.BackupRepos;
+namespace BackUpRepos.Features.AzureDevOpsGits;
 
-public class BackupRepoRequest : IRequest
+public class GetAzureDevOpsGitCommandResult 
 {
     public List<GetReposResponse> Repos { get; set; } = new List<GetReposResponse>();
 }

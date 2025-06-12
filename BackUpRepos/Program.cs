@@ -11,12 +11,15 @@ internal class Program
 
     static async Task Main(string[] args)
     {
-
+        ConfigureLayOut();
         var services = ConfigureServices();
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
-        var getAzureDevOpsGitResponse = await mediator.Send(new GetAzureDevOpsGitRequest());
-        await mediator.Send(new BackupRepoRequest { Repos = getAzureDevOpsGitResponse.Repos });
+        var getAzureDevOpsGitResponse = await mediator.Send(new GetAzureDevOpsGitCommand());
+        await mediator.Send(new BackupRepoCommand { Repos = getAzureDevOpsGitResponse.Repos });
+        Console.WriteLine("Backup completed successfully.");
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
     }
     private static IServiceCollection ConfigureServices()
     {
@@ -30,5 +33,9 @@ internal class Program
         serviceCollection.AddSingleton(configuration);
         Infrastructure.DependencyInjection.ConfigureServices(serviceCollection, configuration);
         return serviceCollection;
+    }
+    private static void ConfigureLayOut() 
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
     }
 }

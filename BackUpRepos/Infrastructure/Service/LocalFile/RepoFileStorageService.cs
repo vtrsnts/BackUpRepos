@@ -5,23 +5,24 @@ using Newtonsoft.Json;
 
 namespace BackUpRepos.Infrastructure.Service.LocalFile;
 
-public class RepoFileStorageService : IRepoFileStorageService
+public class RepoFileStorageService : IRepoStorageService
 {
     private readonly RepoFileStorageConfig _repoFileStorageConfig;
     private readonly string _fileName = $@"{DateTime.Now.ToString("dd-MM-yyyy")}.json";
     private readonly string _fullPathFile;
-    private IList<Repo> _repos;
+    private IList<Repo> _repos = new List<Repo>(); 
     public RepoFileStorageService(IOptions<RepoFileStorageConfig> repoFileStorageConfig)
     {
         _repoFileStorageConfig = repoFileStorageConfig.Value;
         _fullPathFile = $@"{_repoFileStorageConfig.StoragePath}\{_fileName}";
+        GetSuccessRepos();
     }
     public IList<Repo> GetSuccessRepos()
     {
-        _repos = new List<Repo>();
-
+        List<Repo> ? repos = null;
         if (File.Exists(_fullPathFile))
-            _repos = JsonConvert.DeserializeObject<List<Repo>>(File.ReadAllText(_fullPathFile));
+            repos = JsonConvert.DeserializeObject<List<Repo>?>(File.ReadAllText(_fullPathFile));
+        _repos = repos ?? new List<Repo>();  
         return _repos;
     }
     public void SaveSuccessRepos(Repo repo)

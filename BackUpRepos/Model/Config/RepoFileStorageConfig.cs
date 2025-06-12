@@ -2,6 +2,5 @@
 
 public class RepoFileStorageConfig
 {
-    public string StoragePath { get; set; }
-    
+    public string StoragePath { get; set; } = string.Empty;
 }
